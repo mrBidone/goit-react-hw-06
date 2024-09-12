@@ -6,6 +6,7 @@ import ContactsData from "./data/data.json";
 import ContactList from "./components/ContactList/ContactList";
 import ContactForm from "./components/ContactForm/ContactForm";
 import SearchBox from "./components/SearchBox/SearchBox";
+import { useSelector } from "react-redux";
 
 function App() {
   const [contacts, setContacts] = useState(() => {
@@ -14,6 +15,8 @@ function App() {
       ? JSON.parse(savedContacts)
       : ContactsData;
   });
+
+  // const contacts = useSelector((state) => state.contacts);
 
   const [filterValue, setFilterValue] = useState("");
 
