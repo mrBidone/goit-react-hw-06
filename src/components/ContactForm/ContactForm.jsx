@@ -2,43 +2,50 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useId } from "react";
 import * as Yup from "yup";
 import css from "./ContactForm.module.css";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+import { nanoid } from "nanoid";
 
-const phoneRegExp = /^[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}$/;
+const ContactForm = () => {
+  const dispatch = useDispatch();
 
-const ContactValidationSchema = Yup.object().shape({
-  contactName: Yup.string()
-    .required("Required!")
-    .min(3, "Too short!")
-    .max(50, "Too long!"),
-
-  contactNumber: Yup.string()
-    .required("Required!")
-    .min(7, "Too Short!")
-    .matches(
-      phoneRegExp,
-      "The phone number must match the format 'xxx-xxx-xx-xx'"
-    ),
-});
-
-const INITIAL_VALUES = {
-  contactName: "",
-  contactNumber: "",
-};
-
-const ContactForm = ({ onAddContact }) => {
-  const handleSubmit = (values, actions) => {
-    const contactObject = {
-      name: values.contactName,
-      number: values.contactNumber,
-    };
-
-    onAddContact(contactObject);
-
-    actions.resetForm();
+  const onAddContact = (newContact) => {
+    dispatch(addContact(newContact));
   };
+  const INITIAL_VALUES = {
+    contactName: "",
+    contactNumber: "",
+  };
+
+  const phoneRegExp = /^[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}$/;
+
+  const ContactValidationSchema = Yup.object().shape({
+    contactName: Yup.string()
+      .required("Required!")
+      .min(3, "Too short!")
+      .max(50, "Too long!"),
+
+    contactNumber: Yup.string()
+      .required("Required!")
+      .min(7, "Too Short!")
+      .matches(
+        phoneRegExp,
+        "The phone number must match the format 'xxx-xxx-xx-xx'"
+      ),
+  });
 
   const nameFieldId = useId();
   const numberFieldId = useId();
+
+  const handleSubmit = (values, actions) => {
+    const contactObject = {
+      id: nanoid(),
+      name: values.contactName,
+      number: values.contactNumber,
+    };
+    onAddContact(contactObject);
+    actions.resetForm();
+  };
 
   return (
     <>
